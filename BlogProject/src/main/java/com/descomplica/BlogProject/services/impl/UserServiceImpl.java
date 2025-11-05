@@ -21,10 +21,10 @@ public class UserServiceImpl implements UserService {
         if (Objects.nonNull(existingUser)) {
             throw new RuntimeException("Username already exists");
         }
-        User entity = new User(user.getUserId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole());
+        User entity = new User(user.getUserId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole(), user.getUsername());
 
         User newUser = userRepository.save(entity);
-        return new User(newUser.getUserId(), newUser.getName(), newUser.getEmail(), newUser.getPassword(), newUser.getRole());
+        return new User(newUser.getUserId(), newUser.getName(), newUser.getEmail(), newUser.getPassword(), newUser.getRole(), newUser.getUsername());
     }
 
     @Override
