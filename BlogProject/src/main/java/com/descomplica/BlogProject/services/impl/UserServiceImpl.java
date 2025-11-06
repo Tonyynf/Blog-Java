@@ -1,10 +1,12 @@
 package com.descomplica.BlogProject.services.impl;
 
+import ch.qos.logback.classic.encoder.JsonEncoder;
 import com.descomplica.BlogProject.models.User;
 import com.descomplica.BlogProject.repositories.UserRepository;
 import com.descomplica.BlogProject.services.UserService;
 import jdk.jshell.spi.ExecutionControl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,12 +17,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public User save(final User user) {
         User existingUser = userRepository.findByUsername(user.getName());
         if (Objects.nonNull(existingUser)) {
             throw new RuntimeException("Username already exists");
         }
+        String passwordHash = passwordEncoder.encode(user.getPassword());
+
         User entity = new User(user.getUserId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole(), user.getUsername());
 
         User newUser = userRepository.save(entity);
@@ -39,6 +46,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(Long id, User user) {
+        User userUpdate = userRepository.findById(id).orElse(null);
+        if(Objects.nonNull(userUpdate)) {
+            String passwordHash = passwordEncoder.encode(user.getPassword());
+            userUpdate.setName(userUpdate.getName());
+            userUpdate.setEmail(userUpdate.getEmail());
+            userUpdate.setPassword(passwordHash);
+            userUpdate.setRole(userUpdate.getRole());
+            userUpdate.setUsername(userUpdate.getUsername());
+            return userRepository.save(userUpdate);
+        }
         return null;
     }
 

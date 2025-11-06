@@ -2,10 +2,17 @@ package com.descomplica.BlogProject.models;
 
 import com.descomplica.BlogProject.enums.RoleEnum;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "User")
-public class User {
+public class User implements UserDetails {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long UserId;
@@ -68,8 +75,31 @@ public class User {
         this.role = role;
     }
 
-    public String getUsername() { return username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public void setUsername(String username) { this.username = username; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == RoleEnum.ADMIN) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+        }
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+        }
+
+
+        @Override
+        public boolean isAccountNonExpired () {
+            return true;
+        }
 
 }
