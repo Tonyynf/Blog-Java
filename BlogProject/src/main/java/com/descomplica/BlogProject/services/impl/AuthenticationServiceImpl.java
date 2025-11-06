@@ -32,6 +32,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return generateToken(user);
     }
 
+    @Override
+    public String valiidateJwtToken(String token) {
+        return "";
+    }
+
     private String generateToken(User user){
         try{
             Algorithm algorithm = Algorithm.HMAC512("my-secret");
@@ -46,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private String validateJwtToken(String token){
+    public String validateJwtToken(String token){
         try{
             Algorithm algorithm = Algorithm.HMAC512("my-secret");
 
